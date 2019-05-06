@@ -1,17 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-// Create geometry schema
-const GeoSchema = new Schema({
-    type: {
-        type: String,
-        default: 'Point',
-    },
-    coordinates: {
-        type: [Number],
-        index: '2dsphere',
-    }
-})
+const mongooseHidden = require('mongoose-hidden')()
 
 // Create ninja schema and model
 const NinjaSchema = new Schema({
@@ -26,8 +15,10 @@ const NinjaSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    geometry: GeoSchema,
 })
+
+NinjaSchema.set('toJSON', { virtuals: true });
+NinjaSchema.plugin(mongooseHidden);
 
 const Ninja = mongoose.model('ninja', NinjaSchema);
 
