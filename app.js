@@ -7,9 +7,15 @@ const logger = require('morgan');
 const app = express();
 
 // Connect to db
-mongoose.connect('mongodb+srv://test:test@cluster0-c7mkb.mongodb.net/test?retryWrites=true', {
-    useNewUrlParser: true,
-});
+// localhost:27017
+// mongodb+srv://test:test@cluster0-c7mkb.mongodb.net/test?retryWrites=true
+mongoose
+    .connect('mongodb://localhost:27017/ninjago', {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+    })
+    .catch(error => console.log(error));
+
 mongoose.Promise = global.Promise;
 
 // Set up environment
@@ -27,7 +33,7 @@ app.use((req, res, next) => {
         res.end();
     }
     next();
-})
+});
 
 // Set up routing
 app.use('/api/v1/ninjas', require('./routes/ninjas'));
@@ -37,11 +43,11 @@ app.use((req, res, next) => {
     const error = new Error('Not found');
     error.status = 404;
     next(error);
-})
+});
 
 app.use((error, req, res, next) => {
     res.status(error.status || 422).send({ error: error.message });
-})
+});
 
 // // Setup socket connection
 // const io = socket(app);
