@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const mongooseHidden = require('mongoose-hidden')();
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 
 // Create user schema and model
 const UserSchema = new Schema({
@@ -27,9 +27,9 @@ const UserSchema = new Schema({
 });
 
 // Hash a password
-UserSchema.pre('save', async function(next) {
-    this.password = await bcrypt.hash(this.password, 10).catch(next);
-});
+// UserSchema.pre('save', async function(next) {
+//     this.password = await bcrypt.hash(this.password, 10).catch(next);
+// });
 
 // Add a virtual id field
 UserSchema.set('toJSON', { virtuals: true });

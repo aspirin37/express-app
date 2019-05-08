@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
-// get a list of users from the db
+// get a list of users from the database
 exports.getUsers = async (req, res, next) => {
     const users = await User.find({}, '-password');
 
@@ -14,7 +14,7 @@ exports.getUsers = async (req, res, next) => {
     res.send(data);
 };
 
-// add a user to the db
+// add a user to the database
 exports.signUp = async (req, res, next) => {
     let user = await User.findOne({ email: req.body.email });
 
@@ -23,6 +23,10 @@ exports.signUp = async (req, res, next) => {
             error: 'User already exists',
         });
     }
+
+    // hash the password
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
+    req.body.password = passwordHash;
 
     await User.create(req.body);
     user = await User.findOne({ email: req.body.email }, '-password');
@@ -39,19 +43,20 @@ exports.signIn = async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-        return res.status(401).send({
+        const data = {
             error: 'Invalid email or password',
-        });
+        };
+        return res.status(401).send(data);
     }
 
-    console.log(req.body.password, user);
+    // compare the provided password with the hash in the database
     const isValidPassword = await bcrypt.compare(req.body.password, user.password);
-    console.log('!!!');
 
     if (!isValidPassword) {
-        return res.status(401).send({
+        const data = {
             error: 'Invalid email or password',
-        });
+        };
+        return res.status(401).send(data);
     }
 
     const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: '4h' });
@@ -63,7 +68,7 @@ exports.signIn = async (req, res, next) => {
     res.send(data);
 };
 
-// get a user from the db
+// get a user from the database
 exports.getUser = async (req, res, next) => {
     const user = User.findOne({ _id: req.params.id }, '-password');
 
@@ -74,7 +79,7 @@ exports.getUser = async (req, res, next) => {
     res.send(user);
 };
 
-// update a user in the db
+// update a user in the database
 exports.updateUser = async (req, res, next) => {
     await User.updateOne({ _id: req.params.id }, req.body);
 
@@ -91,7 +96,7 @@ exports.updateUser = async (req, res, next) => {
     res.send(data);
 };
 
-// delete a user from the db
+// delete a user from the database
 exports.deleteUser = async (req, res, next) => {
     await User.remove({ _id: req.params.id });
 
