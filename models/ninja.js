@@ -7,7 +7,6 @@ const NinjaSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name field is required'],
-        match: [/.*/, 'Validation example'],
     },
     belt: {
         type: String,
