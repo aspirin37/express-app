@@ -2,6 +2,7 @@ const router = require('express-promise-router')();
 
 const controller = require('../controllers/users');
 const checkAuth = require('../middleware/checkAuth');
+const checkRights = require('../middleware/checkRights');
 
 // get a list of users from the db
 router.get('/', checkAuth, controller.getUsers);
@@ -16,9 +17,9 @@ router.post('/sign-in', controller.signIn);
 router.get('/:id', checkAuth, controller.getUser);
 
 // update a user in the db
-router.patch('/:id', checkAuth, controller.updateUser);
+router.patch('/:id', checkAuth, checkRights, controller.updateUser);
 
 // delete a user from the db
-router.delete('/:id', checkAuth, controller.deleteUser);
+router.delete('/:id', checkAuth, checkRights, controller.deleteUser);
 
 module.exports = router;
